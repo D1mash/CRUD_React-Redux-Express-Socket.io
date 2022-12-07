@@ -3,26 +3,24 @@ const Tutorial = db.tutorials;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Tutorial
-exports.create = (req, res) => {
+exports.create = (socket, data) => {
 	// Validate request
-	if (!req.body.title) {
-		res.status(400).send({
-			message: "Content can not be empty!",
-		});
+	if (!data.title) {
+		socket.emit("createTutorial", data);
 		return;
 	}
 
 	// Create a Tutorial
 	const tutorial = {
-		title: req.body.title,
-		description: req.body.description,
-		published: req.body.published ? req.body.published : false,
+		title: data.title,
+		description: data.description,
+		published: data.published ? data.published : false,
 	};
 
 	// Save Tutorial in the database
 	Tutorial.create(tutorial)
 		.then(data => {
-			res.send(data);
+			socket.emit("createTutorial", data);
 		})
 		.catch(err => {
 			res.status(500).send({
@@ -33,13 +31,16 @@ exports.create = (req, res) => {
 };
 
 // Retrieve all Tutorials from the database.
-exports.findAll = (req, res) => {
-	const title = req.query.title;
-	var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
+exports.findAll = socket => {
+	// const title = req.query.title;
+	// var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
 
-	Tutorial.findAll({ where: condition })
+	Tutorial.findAll({
+		where: null,
+	})
 		.then(data => {
-			res.send(data);
+			socket.emit("fetchTutorials", data);
+			// res.send(data);
 		})
 		.catch(err => {
 			res.status(500).send({
