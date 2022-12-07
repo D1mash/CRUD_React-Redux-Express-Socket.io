@@ -1,7 +1,14 @@
 const tutorials = require("../controllers/tutorial.controller.js");
 var router = require("express").Router();
 
-module.exports = app => {
+module.exports = (app, io) => {
+	io.on("connection", socket => {
+		console.log(`User connected: ${socket.id}`);
+
+		// socket.on("fetchTutorials", () => tutorials.findAll(socket));
+		// socket.on("createTutorial", data => tutorials.create(socket, data));
+	});
+
 	// Create a new Tutorial
 	router.post("/", tutorials.create);
 	// Retrieve all Tutorials
