@@ -5,8 +5,8 @@ module.exports = (app, io) => {
 	io.on("connection", socket => {
 		console.log(`User connected: ${socket.id}`);
 
-		socket.on("fetchTutorials", () => tutorials.findAll(socket));
-		socket.on("createTutorial", data => tutorials.create(socket, data));
+		socket.on("fetchTutorials", () => tutorials.findAll(io));
+		socket.on("createTutorial", data => tutorials.create(io, data));
 	});
 
 	// Create a new Tutorial
