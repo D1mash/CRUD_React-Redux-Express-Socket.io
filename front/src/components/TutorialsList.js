@@ -39,7 +39,7 @@ const TutorialsList = () => {
 	};
 
 	const removeAllTutorials = () => {
-		dispatch(deleteAllTutorials())
+		dispatch(deleteAllTutorials(socket))
 			.then(response => {
 				console.log(response);
 				refreshData();

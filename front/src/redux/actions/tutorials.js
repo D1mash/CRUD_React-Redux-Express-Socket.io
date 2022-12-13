@@ -30,12 +30,12 @@ export const createTutorial =
 export const retrieveTutorials = socket => async dispatch => {
 	try {
 		socket.emit("fetchTutorials");
-		socket.on("fetchTutorials", data =>
+		socket.on("fetchTutorials", data => {
 			dispatch({
 				type: RETRIEVE_TUTORIALS,
 				payload: data,
-			})
-		);
+			});
+		});
 	} catch (err) {
 		console.log(err);
 	}
@@ -69,16 +69,20 @@ export const deleteTutorial = id => async dispatch => {
 	}
 };
 
-export const deleteAllTutorials = () => async dispatch => {
+export const deleteAllTutorials = socket => async dispatch => {
 	try {
-		const res = await TutorialDataService.removeAll();
+		socket.emit("deleteTutorial");
 
-		dispatch({
-			type: DELETE_ALL_TUTORIALS,
-			payload: res.data,
+		return new Promise(resolve => {
+			socket.on("deleteTutorial", data => {
+				dispatch({
+					type: DELETE_ALL_TUTORIALS,
+					payload: data,
+				});
+
+				resolve(data);
+			});
 		});
-
-		return Promise.resolve(res.data);
 	} catch (err) {
 		return Promise.reject(err);
 	}

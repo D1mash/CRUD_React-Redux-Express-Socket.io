@@ -21,6 +21,7 @@ exports.create = (socket, data) => {
 	Tutorial.create(tutorial)
 		.then(data => {
 			socket.emit("createTutorial", data);
+			this.findAll(socket);
 		})
 		.catch(err => {
 			res.status(500).send({
@@ -40,7 +41,6 @@ exports.findAll = socket => {
 	})
 		.then(data => {
 			socket.emit("fetchTutorials", data);
-			// res.send(data);
 		})
 		.catch(err => {
 			res.status(500).send({
@@ -116,13 +116,16 @@ exports.delete = (req, res) => {
 };
 
 // Delete all Tutorials from the database.
-exports.deleteAll = (req, res) => {
+exports.deleteAll = socket => {
 	Tutorial.destroy({
 		where: {},
 		truncate: false,
 	})
 		.then(nums => {
-			res.send({ message: `${nums} Tutorials were deleted successfully!` });
+			socket.emit("deleteTutorial", {
+				message: `${nums} Tutorials were deleted successfully!`,
+			});
+			this.findAll(socket);
 		})
 		.catch(err => {
 			res.status(500).send({

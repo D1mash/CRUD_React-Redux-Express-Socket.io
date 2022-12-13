@@ -31,8 +31,6 @@ const AddTutorial = ({ socket }) => {
 					published: data.published,
 				});
 				setSubmitted(true);
-
-				console.log(data);
 			})
 			.catch(e => {
 				console.log(e);
