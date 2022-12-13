@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useDispatch } from "react-redux";
 import { updateTutorial, deleteTutorial } from "../redux/actions/tutorials";
 import TutorialDataService from "../services/TutorialService";
+import { SocketContext } from "../context/socket";
 
 const Tutorial = props => {
 	const initialTutorialState = {
@@ -12,14 +13,13 @@ const Tutorial = props => {
 	};
 	const [currentTutorial, setCurrentTutorial] = useState(initialTutorialState);
 	const [message, setMessage] = useState("");
-
+	const socket = useContext(SocketContext);
 	const dispatch = useDispatch();
 
 	const getTutorial = id => {
 		TutorialDataService.get(id)
 			.then(response => {
 				setCurrentTutorial(response.data);
-				console.log(response.data);
 			})
 			.catch(e => {
 				console.log(e);
@@ -56,7 +56,7 @@ const Tutorial = props => {
 	};
 
 	const updateContent = () => {
-		dispatch(updateTutorial(currentTutorial.id, currentTutorial))
+		dispatch(updateTutorial(socket, currentTutorial.id, currentTutorial))
 			.then(response => {
 				console.log(response);
 
@@ -68,7 +68,7 @@ const Tutorial = props => {
 	};
 
 	const removeTutorial = () => {
-		dispatch(deleteTutorial(currentTutorial.id))
+		dispatch(deleteTutorial(socket, currentTutorial.id))
 			.then(() => {
 				props.history.push("/tutorials");
 			})

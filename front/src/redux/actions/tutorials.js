@@ -41,28 +41,37 @@ export const retrieveTutorials = socket => async dispatch => {
 	}
 };
 
-export const updateTutorial = (id, data) => async dispatch => {
+export const updateTutorial = (socket, id, data) => async dispatch => {
 	try {
-		const res = await TutorialDataService.update(id, data);
+		// const res = await TutorialDataService.update(id, data);
 
-		dispatch({
-			type: UPDATE_TUTORIAL,
-			payload: data,
+		socket.emit("updateTutorial", { id, data });
+
+		return new Promise(resolve => {
+			socket.on("updateTutorial", data => {
+				dispatch({
+					type: UPDATE_TUTORIAL,
+					payload: data,
+				});
+				resolve(data);
+			});
 		});
 
-		return Promise.resolve(res.data);
+		// return Promise.resolve(res.data);
 	} catch (err) {
 		return Promise.reject(err);
 	}
 };
 
-export const deleteTutorial = id => async dispatch => {
+export const deleteTutorial = (socket, id) => async dispatch => {
 	try {
-		await TutorialDataService.remove(id);
-
-		dispatch({
-			type: DELETE_TUTORIAL,
-			payload: { id },
+		// await TutorialDataService.remove(id);
+		socket.emit("deleteTutorialById", { id });
+		socket.on("deleteTutorialById", data => {
+			dispatch({
+				type: DELETE_TUTORIAL,
+				payload: { data },
+			});
 		});
 	} catch (err) {
 		console.log(err);

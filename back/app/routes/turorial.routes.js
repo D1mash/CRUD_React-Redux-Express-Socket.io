@@ -8,6 +8,8 @@ module.exports = (app, io) => {
 		socket.on("fetchTutorials", () => tutorials.findAll(io));
 		socket.on("createTutorial", data => tutorials.create(io, data));
 		socket.on("deleteTutorial", () => tutorials.deleteAll(io));
+		socket.on("deleteTutorialById", data => tutorials.delete(io, data));
+		socket.on("updateTutorial", data => tutorials.update(io, data));
 
 		socket.on("disconnect", () => {
 			console.log(socket.id, "disconnected");
@@ -16,10 +18,6 @@ module.exports = (app, io) => {
 
 	// Retrieve a single Tutorial with id
 	router.get("/:id", tutorials.findOne);
-	// Update a Tutorial with id
-	router.put("/:id", tutorials.update);
-	// Delete a Tutorial with id
-	router.delete("/:id", tutorials.delete);
 
 	app.use("/api/tutorials", router);
 };

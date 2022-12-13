@@ -32,7 +32,7 @@ exports.create = (socket, data) => {
 };
 
 // Retrieve all Tutorials from the database.
-exports.findAll = socket => {
+exports.findAll = (socket, req, res) => {
 	// const title = req.query.title;
 	// var condition = title ? { title: { [Op.iLike]: `%${title}%` } } : null;
 
@@ -66,21 +66,25 @@ exports.findOne = (req, res) => {
 };
 
 // Update a Tutorial by the id in the request
-exports.update = (req, res) => {
-	const id = req.params.id;
+exports.update = (socket, data) => {
+	const id = data.id;
 
-	Tutorial.update(req.body, {
+	Tutorial.update(data.data, {
 		where: { id: id },
 	})
 		.then(num => {
 			if (num == 1) {
-				res.send({
-					message: "Tutorial was updated successfully.",
-				});
+				socket.emit("updateTutorial", "Tutorial was updated successfully.");
+				// res.send({
+				// 	message: "Tutorial was updated successfully.",
+				// });
 			} else {
-				res.send({
+				socket.emit("updateTutorial", {
 					message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`,
 				});
+				// res.send({
+				// 	message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found or req.body is empty!`,
+				// });
 			}
 		})
 		.catch(err => {
@@ -91,21 +95,24 @@ exports.update = (req, res) => {
 };
 
 // Delete a Tutorial with the specified id in the request
-exports.delete = (req, res) => {
-	const id = req.params.id;
-
+exports.delete = (socket, data) => {
+	const id = data.id;
 	Tutorial.destroy({
 		where: { id: id },
 	})
 		.then(num => {
 			if (num == 1) {
-				res.send({
-					message: "Tutorial was deleted successfully!",
-				});
+				socket.emit("deleteTutorialById", "Tutorial was deleted successfully!");
+				// res.send({
+				// 	message: "Tutorial was deleted successfully!",
+				// });
 			} else {
-				res.send({
+				socket.emit("deleteTutorialById", {
 					message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`,
 				});
+				// res.send({
+				// 	message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`,
+				// });
 			}
 		})
 		.catch(err => {
