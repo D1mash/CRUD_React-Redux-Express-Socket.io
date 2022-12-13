@@ -19,5 +19,8 @@ module.exports = (app, io) => {
 	// Retrieve a single Tutorial with id
 	router.get("/:id", tutorials.findOne);
 
+	// Retrieve all published Tutorials
+	router.get("/published", tutorials.findAllPublished);
+
 	app.use("/api/tutorials", router);
 };
